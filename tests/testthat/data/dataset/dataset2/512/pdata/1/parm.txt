@@ -1,0 +1,46 @@
+
+Current Data Parameters
+NAME     antybiotyki_zewnatrz              
+EXPNO               512              
+PROCNO                1              
+
+F2 - Acquisition Parameters
+Date_          20210201              
+Time              13.13              
+INSTRUM           spect              
+PROBHD   5 mm PABBO BB-              
+PULPROG        cpmgpr1d              
+TD                65536              
+SOLVENT         H2O+D2O              
+NS                  128              
+DS                    4              
+SWH           12019.230 Hz           
+FIDRES         0.183399 Hz           
+AQ            2.7262976 sec          
+RG                  181              
+DW               41.600 usec         
+DE                 6.50 usec         
+TE                298.0 K            
+D1           3.50000000 sec          
+D11          0.03000000 sec          
+D12          0.00002000 sec          
+D20          0.00100000 sec          
+L4                   80              
+TD0                   1              
+
+======== CHANNEL f1 ========
+SFO1        600.5828299 MHz          
+NUC1                 1H              
+P1                15.00 usec         
+P2                30.00 usec         
+PLW1        15.80000019 W            
+PLW9         0.00014220 W            
+
+F2 - Processing parameters
+SI                32768              
+SF          600.5800000 MHz          
+WDW                  EM              
+SSB      0              
+LB                 0.30 Hz           
+GB       0              
+PC                 1.00              

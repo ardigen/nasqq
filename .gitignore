@@ -1,0 +1,144 @@
+# precommit
+inst/
+
+# Renv
+.Renv/
+renv/
+renv/*
+
+# R workspace user specific settings
+.RData
+.Rhistory
+.Ruserdata
+.Rcheck/
+check/
+
+# RStudio
+.Rproj.user/
+*.Rproj
+.Rproj.user/*
+.Rapp.history
+
+# R environment lock file
+.Renviron.lock
+
+# R temporary files
+.RDataTmp
+.RhistoryTmp
+
+# Auto-generated markdown files
+**_files
+
+# R report files
+*-report.R
+*-report.Rmd
+*-report.html
+
+# results
+results
+output
+*.gz
+*.parquet
+*.rda
+*.rds
+*.RData
+*.Rdata
+*.sas7bdat
+*.tgz
+*.tar
+*.zip
+*.eot
+*.map
+*.mp3
+*.ogg
+*.otf
+*.ttf
+*.woff
+*.woff2
+*.js
+
+# macOS system files and folder attributes
+.DS_Store
+.Spotlight-V100
+.Trashes
+__MACOSX
+
+# VS Code
+.vscode/
+
+# Xcode
+xcuserdata/
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+*.xcscmblueprint
+
+# Swift Package Manager
+.build/
+
+# Package compiled Python files
+*.pyc
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyCharm
+.idea/
+*.iml
+*.ipr
+*.iws
+*.bak
+
+# PyInstaller
+dist/
+build/
+
+# virtualenv
+venv/
+env/
+
+# env
+.env
+.venv
+venv/
+ENV/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+.cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+.config/
+
+# Temporary files, logs and dbs
+*~
+*.swp
+*.bak
+*.save
+*.log
+*.sql
+*.sqlite
+*.tmp
+*.temp
+Thumbs.db
+Trashes
+lost+found/
+
+# Nextflow
+work/
+.nextflow/
+*/.nextflow*
+.trace/
+*.lock
+*.out
+*.err
+*.trace
+*.report

@@ -1,0 +1,27 @@
+##TITLE= Audit trail, TOPSPIN		Version 3.2
+##JCAMPDX= 5.01
+##ORIGIN= Bruker BioSpin GmbH
+##OWNER= nmrsu
+$$ C:\Bruker\TopSpin3.2\data\Mlynarz_2020\nmr/próby mikro/514/pdata/1/auditp.txt
+##AUDIT TRAIL=  $$ (NUMBER, WHEN, WHO, WHERE, PROCESS, VERSION, WHAT)
+(   1,<2021-02-01 13:47:56.127 +0100>,<nmrsu>,<nmr600>,<go>,<TOPSPIN 3.2>,
+      <created by zg
+	started at 2021-02-01 13:33:43.398 +0100,
+	POWCHK enabled, PULCHK disabled,
+       configuration hash MD5:
+       0F 1E 32 24 12 31 66 3B D0 88 A5 F6 6C 4D 04 F6
+       data hash MD5: 64K
+       B7 3A 2B C8 DC 2B A0 99 46 2B 54 0C 9C CB F6 CF>)
+(   2,<2021-02-01 13:48:06.189 +0100>,<nmrsu>,<nmr600>,<proc1d>,<TOPSPIN 3.2>,
+      <Start of raw data processing
+       efp LB = 0.3 FT_mod = 6 PKNL = 1 PHC0 = 35.23717 PHC1 = 0.4268856 SI = 32K 
+       data hash MD5: 32K
+       8A 7A 71 01 66 72 45 F4 D3 25 98 29 34 08 40 AB>)
+(   3,<2021-02-01 13:48:06.298 +0100>,<nmrsu>,<nmr600>,<proc1d>,<TOPSPIN 3.2>,
+      <apk 
+       data hash MD5: 32K
+       BA BC 4D 49 6C A4 F5 0A 0D D4 05 CD 2F FC 18 8E>)
+##END=
+
+$$ hash MD5
+$$ B2 FC 5C 73 4A 67 88 DB 35 C5 52 6D 81 86 26 06

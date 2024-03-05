@@ -1,0 +1,5 @@
+patient_no,batch,State
+30,batch3,Condition
+50,batch3,Condition
+60,batch3,Baseline
+80,batch3,Baseline

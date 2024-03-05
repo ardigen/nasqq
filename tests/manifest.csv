@@ -1,0 +1,4 @@
+dataset,batch,input_path,metadata_file,selected_sample_names,target_value,referencing_range,window_selection_range
+test1,test1,./testthat/data/dataset/dataset1,./testthat/data/metadata/metadata1.csv,500;501;503;504,0,None,0;10
+test2,test2,./testthat/data/dataset/dataset2,./testthat/data/metadata/metadata2.csv,all,0,None,0;5
+test3,None,./testthat/data/dataset/dataset3,./testthat/data/metadata/metadata3.csv,502;505;507;508;509;510,2,2.5;4.55,0;10
