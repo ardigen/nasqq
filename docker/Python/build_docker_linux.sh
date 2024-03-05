@@ -1,1 +1,1 @@
-docker build -t hnmr-workflow:python_utils -f Dockerfile . --platform=linux/amd64
+docker build -t ghcr.io/ardigen/nasqq/python_utils:latest -f Dockerfile . --platform=linux/amd64

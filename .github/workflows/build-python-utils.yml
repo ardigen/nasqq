@@ -1,0 +1,28 @@
+name: Build Python Utils
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-python-utils:
+    if: |
+      github.event_name != 'pull_request' &&                     
+      !contains(github.event.head_commit.message, 'draft') &&     
+      !(github.ref_type == 'branch' && github.event_name == 'pull_request') &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/tags/main') 
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v1
+      - name: Build Python utils
+        run: |
+          cd ./docker/Python/
+          docker build --pull -t ${{ secrets.DOCKER_IMAGE_NAME_PYTHON }} .
+          docker push ${{ secrets.DOCKER_IMAGE_NAME_PYTHON }}

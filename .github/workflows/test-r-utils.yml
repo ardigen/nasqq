@@ -1,0 +1,28 @@
+name: Test R Utils
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-r-utils:
+    if: |
+      github.event_name != 'pull_request' &&                     
+      !contains(github.event.head_commit.message, 'draft') &&     
+      !(github.ref_type == 'branch' && github.event_name == 'pull_request') &&
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/tags/main')      
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v1
+      - name: Pull R utils image
+        run: docker pull ${{ secrets.DOCKER_IMAGE_NAME_R }} || true
+      - name: Run R utils tests
+        run: |
+          docker run --rm --entrypoint "/bin/bash" -v "$(pwd)":/mnt ${{ secrets.DOCKER_IMAGE_NAME_R }} -c "R -e 'testthat::test_dir(\"/mnt/tests/testthat/\")'"

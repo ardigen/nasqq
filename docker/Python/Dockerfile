@@ -1,5 +1,7 @@
 FROM python:3.9
 LABEL maintainer="USER <lukasz.pruss@ardigen.com>"
+LABEL org.opencontainers.image.source=https://github.com/ardigen/nasqq
+LABEL org.opencontainers.image.description="python_utils"
 
 COPY requirements.txt .
 
