@@ -1,4 +1,4 @@
-name: Test R Utils
+name: R Utils CI
 
 on:
   push:
@@ -9,20 +9,32 @@ on:
       - main
 
 jobs:
-  test-r-utils:
+  build-and-test-r-utils:
     if: |
       github.event_name != 'pull_request' &&                     
       !contains(github.event.head_commit.message, 'draft') &&     
       !(github.ref_type == 'branch' && github.event_name == 'pull_request') &&
-      (github.ref == 'refs/heads/main' || github.ref == 'refs/tags/main')      
+      (github.ref == 'refs/heads/main' || github.ref == 'refs/tags/main') 
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker registry
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ghcr.io -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build R utils
+        run: |
+          cd ./docker/R/
+          docker build --pull -t ${{ secrets.DOCKER_IMAGE_NAME_R }} .
+          docker push ${{ secrets.DOCKER_IMAGE_NAME_R }}
+
       - name: Pull R utils image
         run: docker pull ${{ secrets.DOCKER_IMAGE_NAME_R }} || true
+
       - name: Run R utils tests
         run: |
           docker run --rm --entrypoint "/bin/bash" -v "$(pwd)":/mnt ${{ secrets.DOCKER_IMAGE_NAME_R }} -c "R -e 'testthat::test_dir(\"/mnt/tests/testthat/\")'"

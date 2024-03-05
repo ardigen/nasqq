@@ -1,4 +1,4 @@
-name: Test Python Utils
+name: Python Utils CI
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  test-python-utils:
+  build-and-test-python-utils:
     if: |
       github.event_name != 'pull_request' &&                     
       !contains(github.event.head_commit.message, 'draft') &&     
@@ -19,10 +19,22 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+
       - name: Set up Docker
         uses: docker/setup-buildx-action@v1
+
+      - name: Log in to Docker registry
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ghcr.io -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Python utils
+        run: |
+          cd ./docker/Python/
+          docker build --pull -t ${{ secrets.DOCKER_IMAGE_NAME_PYTHON }} .
+          docker push ${{ secrets.DOCKER_IMAGE_NAME_PYTHON }}
+
       - name: Pull Python utils image
         run: docker pull ${{ secrets.DOCKER_IMAGE_NAME_PYTHON }} || true
+
       - name: Run Python utils tests
         run: |
           docker run --rm --entrypoint "/bin/bash" -v "$(pwd)":/mnt ${{ secrets.DOCKER_IMAGE_NAME_PYTHON }} -c "cd /mnt/tests/pytest/ && pytest test_data_analysis.py"
