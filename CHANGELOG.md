@@ -1,4 +1,4 @@
-## [1.0.0](https://github.com/ardigen/nasqq/-/tree/v1.0.0) - 2024-03-06
+## [1.0.0](https://github.com/ardigen/nasqq/releases/tag/v1.0.0) - 2024-03-06
 
 ### Added
 
