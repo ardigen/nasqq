@@ -72,7 +72,7 @@ Spectrum_data_ZOPC <- readRDS(file = Spectrum_data_ZOPC)
 
 if (reverse_axis_samples == "selected")
 {
-    selected_samples_to_reverse <- return_samples_to_reverse(Spectrum_data_ZOPC)
+    selected_samples_to_reverse <- return_samples_to_reverse(Spectrum_data_ZOPC, threshold = 60)
     if (length(selected_samples_to_reverse) > 0)
     {
         Spectrum_data_ZOPC <- reverse_selected_samples_axis(selected_samples_to_reverse = selected_samples_to_reverse, matrix_ZOPC = Spectrum_data_ZOPC)

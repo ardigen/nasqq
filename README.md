@@ -194,7 +194,7 @@ Be aware that NextFlow is not a resource orchestration system. If you need it, t
 <!-- LICENSE -->
 ### License
 
-NASQQ is distributed under the custom License. See [`LICENSE.md`](./LICENSE.md) for more information.
+NASQQ is distributed under the MIT License. See [`LICENSE.md`](./LICENSE.md) for more information.
 
 <!-- CONTACT -->
 ### Contact

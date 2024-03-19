@@ -35,7 +35,7 @@ option_list <- list(
   ),
   make_option(
     c("--mb"),
-    type = "integer", default = 15000, dest = "mb", help = "(Optional) Number or width of buckets, depending on width argument"
+    type = "integer", default = 5000, dest = "mb", help = "(Optional) Number or width of buckets, depending on width argument"
   )
 )
 

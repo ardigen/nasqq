@@ -6,6 +6,6 @@ Date: 2024-02-19
 Author: Lukasz Pruss
 Maintainer: Lukasz Pruss <lukasz.pruss@ardigen.com>
 Description: Helper functions for spectral preprocessing and biological interpretation
-License: Custom
+License: MIT
 RoxygenNote: 7.3.1
 Encoding: UTF-8
