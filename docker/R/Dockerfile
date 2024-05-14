@@ -1,6 +1,5 @@
 FROM rocker/r-base:4.2.2
 LABEL maintainer="USER <lukasz.pruss@ardigen.com>"
-LABEL maintainer="USER <lukasz.pruss@ardigen.com>"
 LABEL org.opencontainers.image.source=https://github.com/ardigen/nasqq
 LABEL org.opencontainers.image.description="r_utils"
 
