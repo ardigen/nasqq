@@ -6,6 +6,7 @@ options    = initOptions(params.options)
 process PATHWAY_ANALYSIS {
     tag "${project}"
     label "process_medium"
+    container "ghcr.io/ardigen/nasqq/r_utils"
     publishDir "${params.outDir}/${project}/pathway_analysis/${type}", mode: 'copy'
 
     input:
