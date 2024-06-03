@@ -73,7 +73,7 @@ For detailed information on each stage of the analysis and scripts, refer to [do
 
 ---
 > *Note: NASQQ is an extension of existing solutions, aimed at enhancing the accessibility and efficiency of metabolomic data analysis. The Workflow is designed to be system agnostic, however it 
-> was tested only on MacOS (M1 chip) and Linux (Ubuntu 22.04).*
+> was tested only on MacOS (M1 chip) and Linux (Ubuntu 22.04). In order to use pipeline on Windows system please refer to [WSL](https://learn.microsoft.com/pl-pl/windows/wsl/about)*
 <div align="right"><a href="#nasqq-nextflow-automatization-and-standardization-for-qualitative-and-quantitative-1h-nmr-metabolomics">(Back to Top)</a></div>
 
 <!-- GETTING STARTED -->
@@ -104,14 +104,18 @@ Next, build Docker images as the workflow requires Docker containers for both R 
 
 For Linux user execute:
  ```sh
-./docker/Python/build_docker_linux.sh
-./docker/R/build_docker_linux.sh
+cd nasqq/docker/Python
+./build_docker_linux.sh
+cd nasqq/docker/R
+./build_docker_linux.sh
  ```
 
 For MacOS (M1) user execute:
  ```sh
-./docker/Python/build_docker_macos.sh
-./docker/R/build_docker_macos.sh
+cd nasqq/docker/Python
+./build_docker_macos.sh
+cd nasqq/docker/R
+./build_docker_macos.sh
  ```
 
 After setting up project create coma separated [manifest.csv](./tests/manifest.csv) file, with following structure and headers:
@@ -177,7 +181,7 @@ In order to run the test data simply go the tests directory and run the test run
 <!-- MEMORY ALLOCATION -->
 ### Memory allocation
 
-Please remember that based on the number of datasets provided in the manifest your local machine has to have that many resources. [visit this thread: https://github.com/nextflow-io/nextflow/issues/1787] The lack of resources can lead to incorrect memory allocation is the script.
+Please remember that based on the number of datasets provided in the manifest your local machine has to have that many resources. [visit this thread: https://github.com/nextflow-io/nextflow/issues/1787] The lack of resources can lead to incorrect memory allocation in the script. It is recommended to change **max_cpus** and **max_memory** params in [nextflow.config](./nextflow.config) file accordingly to resources avaibale on your local machine. 
 
 example:
 ```
