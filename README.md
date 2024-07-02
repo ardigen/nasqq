@@ -47,33 +47,34 @@
   style="display: inline-block; margin: 0 auto">
 
 1. **Load FIDs**: Retrieve raw FIDs from a specified location, extract sample names, and filter pulse program.
-2. **Group Delay Correction**: Eliminate Bruker Group Delay from the FIDs.
-3. **Solvent Suppression**: Estimate and eliminate residual solvent signals from the FIDs.
-4. **Apodization**: Enhance the Signal-to-Noise ratio in the spectra.
-5. **Zero Filling**: Enhance the visual clarity of spectra by inserting zeros.
-6. **Fourier Transformation**: Convert FIDs from the time domain to frequency domain spectra using Fourier Transformation.
-7. **Zero Order Phase Correction**: Adjust spectra phase to ensure pure absorptive mode in the real part.
-8. **Internal Referencing**: Align spectra with an internal reference compound.
-9. **Baseline Correction**: Estimate and remove spectral baseline from the spectral profiles.
-10. **Negative Values Zeroing**: Set all negative values in spectra to zero.
-11. **(Optional) Warping**: Apply Semi-Parametric Time Warping technique to warp and realign spectra.
-12. **Window Selection**: Choose the informative segment of spectra.
-13. **(Optional) Bucketing**: Simplify density of spectra peaks.
-14. **Normalization**: Normalize the spectra.
-15. **Metabolites Quantification**: Identify and quantify metabolites based on normalized spectra.
-16. **Add Metadata**: Merge metadata with quantified metabolites' relative abundances.
-17. **(Optional) Combine Dataset Batches**: Merge batches from the dataset for streamlined analysis.
-18. **Features Processing**: Load data and perform sanity checks.
-19. **Exploratory Data Analysis**: Conduct Principal Component Analysis and generate exploratory analysis visualizations.
-20. **Univariate Analysis**: Identify outliers, assess data normality, and conduct univariate statistical tests.
-21. **Multivariate Analysis**: Utilize machine learning models to analyze metabolite data.
-22. **Pathway Analysis**: Perform pathway enrichment analysis using KEGG database entries.
+2. **Raw FIDs Visualisation**: Plot raw FIDs figures.
+3. **Group Delay Correction**: Eliminate Bruker Group Delay from the FIDs.
+4. **Solvent Suppression**: Estimate and eliminate residual solvent signals from the FIDs.
+5. **Apodization**: Enhance the Signal-to-Noise ratio in the spectra.
+6. **Zero Filling**: Enhance the visual clarity of spectra by inserting zeros.
+7. **Fourier Transformation**: Convert FIDs from the time domain to frequency domain spectra using Fourier Transformation.
+8. **Zero Order Phase Correction**: Adjust spectra phase to ensure pure absorptive mode in the real part.
+9. **Internal Referencing**: Align spectra with an internal reference compound.
+10. **Baseline Correction**: Estimate and remove spectral baseline from the spectral profiles.
+11. **Negative Values Zeroing**: Set all negative values in spectra to zero.
+12. **(Optional) Warping**: Apply Semi-Parametric Time Warping technique to warp and realign spectra.
+13. **Window Selection**: Choose the informative segment of spectra.
+14. **(Optional) Bucketing**: Simplify density of spectra peaks.
+15. **Normalization**: Normalize the spectra.
+16. **Metabolites Quantification**: Identify and quantify metabolites based on normalized spectra.
+17. **Add Metadata**: Merge metadata with quantified metabolites' relative abundances.
+18. **(Optional) Combine Dataset Batches**: Merge batches from the dataset for streamlined analysis.
+19. **Features Processing**: Load data and perform sanity checks.
+20. **Exploratory Data Analysis**: Conduct Principal Component Analysis and generate exploratory analysis visualizations.
+21. **Univariate Analysis**: Identify outliers, assess data normality, and conduct univariate statistical tests.
+22. **Multivariate Analysis**: Utilize machine learning models to analyze metabolite data.
+23. **Pathway Analysis**: Perform pathway enrichment analysis using KEGG database entries.
 
 For detailed information on each stage of the analysis and scripts, refer to [docs](./docs) folder, where separate README.md files are provided.
 
 ---
 > *Note: NASQQ is an extension of existing solutions, aimed at enhancing the accessibility and efficiency of metabolomic data analysis. The Workflow is designed to be system agnostic, however it 
-> was tested only on MacOS (M1 chip) and Linux (Ubuntu 22.04). In order to use pipeline on Windows system please refer to [WSL](https://learn.microsoft.com/pl-pl/windows/wsl/about)*
+> was tested on MacOS (M1 chip) and Linux (Ubuntu 22.04). In order to use pipeline on Windows system please refer to [WSL](https://learn.microsoft.com/pl-pl/windows/wsl/about)*
 <div align="right"><a href="#nasqq-nextflow-automatization-and-standardization-for-qualitative-and-quantitative-1h-nmr-metabolomics">(Back to Top)</a></div>
 
 <!-- GETTING STARTED -->
@@ -91,16 +92,16 @@ To begin using the pipeline, it's essential to ensure that certain prerequisites
 <!-- PROJECT SETUP -->
 ### Project setup
 
-Clone the project's Github repository to your local machine:
+1. Clone the project's Github repository to your local machine:
    
    ```sh
    git clone https://github.com/ardigen/nasqq
    ```
 
 
-> *Note: Grant appropriate permissions to the workflow directory: `chmod 777 -R <location>/nasqq`*
+> *Note: Grant appropriate permissions to the workflow directory e.g. `chmod 777 -R <location>/nasqq`*
 
-Next, build Docker images as the workflow requires Docker containers for both R and Python environments. There are [R](./docker/R/Dockerfile) and [Python](./docker/Python/Dockerfile) Dockerfiles needed to execute the workflow, which are compatible with Linux and MacOS (M1 chips) systems. 
+Processes executed in the NASQQ pipeline are maintained in a containerized environment. The project repository includes prebuilt Docker images for the execution of all modules, **r_utils** and **python_utils**, available [here](https://github.com/orgs/ardigen/packages?repo_name=nasqq). Nextflow manages all dependencies as links to the appropriate Docker containers are included in the [base.config](./conf/base.config). However, if there are issues with repository, the necessary Dockerfiles compatible with Linux and MacOS (M1 chips) systems, are provided. These Docker images can be built locally for both [R](./docker/R/Dockerfile) and [Python](./docker/Python/Dockerfile) environments.
 
 For Linux user execute:
  ```sh
@@ -118,7 +119,7 @@ cd nasqq/docker/R
 ./build_docker_macos.sh
  ```
 
-After setting up project create coma separated [manifest.csv](./tests/manifest.csv) file, with following structure and headers:
+2. After setting up project create coma separated [manifest.csv](./tests/manifest.csv) file, with following structure and headers:
 
 ```csv
 dataset,batch,input_path,metadata_file,selected_sample_names,target_value,referencing_range,window_selection_range
@@ -134,9 +135,54 @@ test3,None,./testthat/data/dataset/dataset3,./testthat/data/metadata/metadata3.c
 * `selected_sample_names` - selection of sample names, ";" separated (Default: `all`).
 * `target_value` - PPM value of the signal used as the internal reference spectra (Default: 0). 
 * `referencing_range` - if `target_value` is different from the default, the range where the referencing signal will be searched (Defaul: `None`).
-* `window_selection_range` - range of the informative part of the spectra, separated by ";" (Default: `0;10`).
+* `window_selection_range` - range of the informative part of the spectra, separated by ";" (Default: `0;10`). 
 
-Another file that needs to be created is [params.yml](./tests/params.yml). This document outlines the required inputs for configuring the data processing pipeline. Make sure to fill in the necessary values according to table below.
+As of version 1.0.0 of the NASQQ pipeline, the only supported input files are in Bruker format. These must include at a minimum the files `acqu`, `acqus`, `pulsprogram`, and the `pdata` subfolder. An exemplary dataset folder structure is shown below.
+
+```bash
+data/dataset/
+├── 10
+│   ├── acqu
+│   ├── acqus
+│   ├── fid
+│   ├── pdata
+│   │   └── 1
+│   │       ├── 1i
+│   │       ├── 1r
+│   │       ├── outd
+│   │       ├── proc
+│   │       ├── procs
+│   │       └── title
+│   ├── pulseprogram
+│   ├── scon2
+│   ├── specpar
+│   ├── uxnmr.info
+│   └── uxnmr.par
+├── 11
+│   ├── acqu
+│   ├── acqus
+│   ├── audita.txt
+│   ├── fid
+│   ├── pdata
+│   │   └── 1
+│   │       ├── 1i
+│   │       ├── 1r
+│   │       ├── outd
+│   │       ├── proc
+│   │       ├── procs
+│   │       └── title
+│   ├── pulseprogram
+│   ├── scon2
+│   ├── specpar
+│   ├── uxnmr.info
+│   └── uxnmr.par
+```
+
+3. If the necessary `metadata_file` referenced in [manifest.csv](./tests/manifest.csv) does not yet exist, create it and provide the appropriate paths. The file should contain meta-information about corresponding `input_path` datasets. Each metadata file must be in CSV format, with three columns: `patient_no`, `batch`, and a column for state information relevant to the data analysis module, such as disease, gender, or checkpoint, with the column name not being hardcoded. As the pipeline design supports only pairwise classification of samples, having more than two groups will trigger a warning, and the pipeline will terminate during the **Data Analysis** stage. If there is no batch separation, the `batch` column should be filled with `"None"` values.
+
+> *Note: The [manifest.csv](./tests/manifest.csv) file should include dataset-specific local parameters. Metadata files may contain more records than the specific dataset, but only those records that can be mapped to folders found in `input_path` will be used.*  
+
+4. The final file that needs to be created is [params.yml](./tests/params.yml). This document outlines the required inputs for configuring the data processing pipeline and consists of global parameters for the pipeline. These parameters are applied run-wise. Ensure that you fill in the necessary values according to the table below.
 
 | Input          | Description                                                                                                 | Datatype  |
 |----------------|-------------------------------------------------------------------------------------------------------------|-----------|
@@ -153,11 +199,12 @@ Another file that needs to be created is [params.yml](./tests/params.yml). This 
 | run_combine_project_batches | Enable/disable merging datasets for data analysis where batch is not "None"                    | boolean   |
 | ncores         | The number of threads allocated for the ASICS quantification task                                           | integer   |
 | log1p          | Enable/disable log1p normalization of metabolites before data analysis                                      | boolean   |
-| metadata_column| The column containing binary state information for the data analysis module                                 | string    |
+| metadata_column | The column name containing state information for the data analysis module                                 | string    |
 | reverse_axis_samples | Specifies whether to reverse the axis for all samples or selected samples based on a threshold        | string    |
 
+> *Note: The [params.yml](./tests/params.yml) file consolidates all global parameters required for executing the pipeline using the `-params-file` flag. Alternatively, the pipeline can be executed without creating this file by specifying each parameter as a separate flag, such as `--run_warping True` or `--ncores 3`, in accordance with Nextflow [configuration](https://www.nextflow.io/docs/latest/config.html).* 
 
-After completing every step open [run.sh](./tests/run.sh) and adjust paths for execution of workflow or run manually using command: 
+5. After completing every step open [run.sh](./tests/run.sh) and adjust paths for execution of workflow or run manually using command: 
 
 ```sh
 nextflow run ../main.nf \
@@ -212,17 +259,17 @@ The scripts and workflow was originally created as a part of [Łukasz Pruss's](h
 
 Furthermore, many people were involved in the evolution of the pipeline, turning it from a concept into an end-to-end solution. These contributors include:
 
-* [Wojciech Wojtowicz](wojciech.wojtowicz@pwr.edu.pl)
-* [Tomasz Jetka](tomasz.jetka@ardigen.com)
-* [Kaja Milanowska-Zabel](kaja.milanowska-zabel@ardigen.com)
-* [Piotr Młynarz](piotr.mlynarz@pwr.edu.pl)
+* [Wojciech Wojtowicz](https://www.linkedin.com/in/wmwojtowicz/)
+* [Tomasz Jetka](https://www.linkedin.com/in/tomaszjetka/)
+* [Kaja Milanowska-Zabel](https://www.linkedin.com/in/kajamilanowska/)
+* [Piotr Młynarz](https://www.linkedin.com/in/piotr-mlynarz-816817103/)
 
 Special thanks for the assistance in development process, code reviews and tips are extend to: 
 
-* [Paweł Biernat](pawel.biernat@ardigen.com)
-* [Michał Jakubaczak](michal.jakubczak@ardigen.com)
-* [Błażej Szczerba](blazej.szczerba@ardigen.com)
-* [Filip Wątorek](filip.watorek@gmail.com)
+* [Paweł Biernat](https://www.linkedin.com/in/pawel-biernat-a0b160109/)
+* [Michał Jakubaczak](https://www.linkedin.com/in/micha%C5%82-jakubczak-5200b0189/)
+* [Błażej Szczerba](https://www.linkedin.com/in/b%C5%82a%C5%BCej-szczerba-26b600b/)
+* [Filip Wątorek](https://www.linkedin.com/in/filip-w%C4%85torek/)
 
 <!-- CITATIONS -->
 ### Citations
