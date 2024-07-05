@@ -207,13 +207,30 @@ def create_distribution_plots(
     - figsize (tuple): Size of the plots.
 
     """
-    features_col = df.sample(frac=1, random_state=1).columns
-    random_features = np.random.RandomState(0).choice(
-        features_col, size=min(n_size, features_col.size), replace=False
-    )
+
     melted_df = df.reset_index().melt(
-        id_vars=index_columns, var_name="Feature", value_vars=random_features
+        id_vars=index_columns, var_name="Feature", value_name="value"
     )
+
+    non_zero_variance_features = []
+    for group, data in melted_df.groupby([metacol]):
+        if data["value"].var() > 0:
+            non_zero_variance_features.extend(data["Feature"].unique())
+
+    non_zero_variance_features = list(set(non_zero_variance_features))
+
+    random_features = np.random.choice(
+        non_zero_variance_features,
+        size=min(n_size, len(non_zero_variance_features)),
+        replace=False,
+    )
+
+    if len(random_features) == 0:
+        print("No features with non-zero variance found. Skipping plots.")
+        return
+
+    melted_df = melted_df[melted_df["Feature"].isin(random_features)]
+
     fig = plt.figure(figsize=figsize)
     box = sns.boxplot(
         data=melted_df,
