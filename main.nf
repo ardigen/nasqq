@@ -10,6 +10,7 @@ include { SPECTRAL_PREPROCESSING     } from './subworkflows/spectral_preprocessi
 include { METABOLITES_QUANTIFICATION } from './modules/metabolites_quantification'
 include { ADD_METADATA               } from './modules/data_analysis/add_metadata'
 include { COMBINE_DATASET_BATCHES    } from './modules/data_analysis/combine_dataset_batches'
+include { BATCH_CORRECTION           } from './modules/data_analysis/batch_correction'
 include { DATA_ANALYSIS              } from './subworkflows/data_analysis'
 include { PATHWAY_ANALYSIS as PATHWAY_ANALYSIS_MULTIVARIATE } from './modules/biological_interpretation/pathway_analysis'
 include { PATHWAY_ANALYSIS as PATHWAY_ANALYSIS_UNIVARIATE   } from './modules/biological_interpretation/pathway_analysis'
@@ -45,13 +46,21 @@ workflow {
     if (params.run_combine_project_batches) {
         combinedResults_to_merge = ADD_METADATA.out.files_to_merge.collect()
         combinedResults_without_merge = ADD_METADATA.out.files_without_merge.collect()
-        if (combinedResults_to_merge){
+        if (combinedResults_to_merge) {
             COMBINE_DATASET_BATCHES(combinedResults_to_merge)
-            merged_input = COMBINE_DATASET_BATCHES.out}
+            merged_input = COMBINE_DATASET_BATCHES.out
+            
+            if (params.run_batch_correction) {
+                BATCH_CORRECTION(merged_input, params.metadata_column)
+                corrected_data = BATCH_CORRECTION.out.flow
+            } else {
+                corrected_data = merged_input
+            }
+        }
         if (combinedResults_without_merge){
             not_merged_input = combinedResults_without_merge}
 
-        input_data_analysis = merged_input.mix(not_merged_input)
+        input_data_analysis = corrected_data.mix(not_merged_input)
 
     } else {
         input_data_analysis = ADD_METADATA.out.flow

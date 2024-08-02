@@ -6,63 +6,36 @@ import pandas as pd
 from inmoose.pycombat import pycombat_norm
 from ml_helpers import *
 
-def load_data(
-    data_location,
-    results_location,
-    disease_metacol,
-    batch_metacol,
-    patient_metacol,
-    data_file,
-):
-    """Load metabolite data.
+def load_data(data_location, data_file, index_columns):
+    """
+    Load metabolite data.
 
     Parameters:
     - data_location (str): Location of data files.
-    - results_location (str): Location to store results.
-    - disease_metacol (str): Name of the disease metadata column.
-    - batch_metacol (str): Name of the batch metadata column.
-    - patient_metacol (str): Name of the patient metadata column.
     - data_file (str): Name of the data file.
-
+    - index_columns (list): List of columns to be used as index.
+    
     Returns:
     - pd.DataFrame: Loaded metabolite data.
-    - list: Index columns.
-
     """
-    index_columns = [
-        metacol
-        for metacol in [batch_metacol, patient_metacol, disease_metacol]
-        if metacol is not None
-    ]
+    df_features = pd.read_csv(
+        os.path.join(data_location, data_file), sep=";", index_col=index_columns
+    )
+    return df_features
 
-    file_path = os.path.join(data_location, data_file)
-    df_features_proc = pd.read_parquet(file_path)
-
-    return df_features_proc, index_columns
-
-def apply_combat_correction(data_file, batch_metacol, results_location, covariates=None):
+def apply_combat_correction(data, batch_metacol, covariates=None):
     """
     Apply ComBat batch correction using InMoose to the given data.
 
     Parameters:
-    - data_file (str): Path to the Parquet file containing the data with a MultiIndex.
+    - data (pd.DataFrame): DataFrame containing the data with a MultiIndex.
     - batch_metacol (str): The name of the metadata column indicating batch information.
-    - results_location (str): Path to the directory where the corrected data will be saved.
     - covariates (pd.Series, optional): Series containing covariates for adjustment. Default is None.
 
     Returns:
     - None
     """
     try:
-        data, index_columns = load_data(
-            args.data_location,
-            args.results_location,
-            args.disease_metacol,
-            args.batch_metacol,
-            args.patient_metacol,
-            args.data_file,
-        )
-
         if not isinstance(data.index, pd.MultiIndex):
             raise ValueError("The input data must have a MultiIndex with 'batch' as one of the levels.")
 
@@ -89,27 +62,27 @@ def apply_combat_correction(data_file, batch_metacol, results_location, covariat
         )
 
         corrected_data = pd.DataFrame(corrected_data_t.T, index=data.index, columns=data.columns)
-        os.makedirs(results_location, exist_ok=True)
-        results_file = os.path.join(results_location, "batch_corrected_data.parquet")
-        corrected_data.to_parquet(results_file)
+        # corrected_data.to_parquet("metabolites_processed.parquet", index=True)
+        corrected_data.to_csv("metabolites_batch_corrected.txt", sep=";", index=True)
+        print("Batch corrected data saved to metabolites_batch_corrected.txt")
 
     except Exception as e:
         print(f"An error occurred during batch correction: {e}")
 
 def main(args):
+    index_columns = [col for col in [args.batch_metacol, args.patient_metacol, args.disease_metacol] if col]
+    data = load_data(args.data_location, args.data_file, index_columns)
     covariates = pd.Series(args.covariates) if args.covariates else None
-    apply_combat_correction(args.data_file, args.batch_metacol, os.path.join(args.results_location, "tables"), covariates)
+    apply_combat_correction(data, args.batch_metacol, covariates)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Apply ComBat batch correction to metabolomics data.")
     parser.add_argument("--data_location", type=str, default="", help="Location of data files.")
-    parser.add_argument("--results_location", type=str, default="results", help="Location to store results.")
     parser.add_argument("--data_file", type=str, required=True, help="Name of the data file.")
-    parser.add_argument("--disease_metacol", type=str, required=True, help="Name of the disease metadata column.")
+    parser.add_argument("--disease_metacol", type=str, help="Name of the disease metadata column.")
     parser.add_argument("--batch_metacol", type=str, help="Name of the batch metadata column.")
     parser.add_argument("--patient_metacol", type=str, required=True, help="Name of the patient metadata column.")
     parser.add_argument("--covariates", nargs='+', type=float, help="List of covariates for adjustment.")
     
     args = parser.parse_args()
-
     main(args)
