@@ -9,6 +9,7 @@ process FEATURES_PROCESSING {
     input:
         tuple(val(project), val(batch), path(normalized_metabolites))
         val(metadata_column)
+        val(zeronan_threshold)
     output:
         tuple(val(project), val(batch), path('results/tables/metabolites_processed.parquet'), emit: fd)
         path('*')
@@ -26,6 +27,7 @@ process FEATURES_PROCESSING {
         --data_file "${normalized_metabolites}" \
         --disease_metacol "${metadata_column}" \
         --batch_metacol "batch" \
-        --patient_metacol "patient_no"
+        --patient_metacol "patient_no" \
+        --zeronan_threshold "${zeronan_threshold}"
     """
 }

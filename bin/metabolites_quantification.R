@@ -59,7 +59,7 @@ dir_path <- opt$dir_path
 peps_format_file <- opt$peps_format_file
 ncores <- opt$ncores
 quantif_method <- opt$quantif_method
-reference <- opt$reference
+reference <- ifelse(opt$reference == "NULL", NULL, opt$reference)
 normalisation <- opt$normalisation
 baseline_correction <- opt$baseline_correction
 alignment <- opt$alignment

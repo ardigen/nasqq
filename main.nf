@@ -5,15 +5,18 @@ nextflow.enable.dsl = 2
 def modules = params.modules.clone()
 params.options = [:]
 
-include { PARSE_SAMPLES              } from './subworkflows/parser'
-include { SPECTRAL_PREPROCESSING     } from './subworkflows/spectral_preprocessing'
-include { METABOLITES_QUANTIFICATION } from './modules/metabolites_quantification'
-include { ADD_METADATA               } from './modules/data_analysis/add_metadata'
-include { COMBINE_DATASET_BATCHES    } from './modules/data_analysis/combine_dataset_batches'
-include { BATCH_CORRECTION           } from './modules/data_analysis/batch_correction'
-include { DATA_ANALYSIS              } from './subworkflows/data_analysis'
+include { isFileEmpty } from './modules/functions'
+
+include { PARSE_SAMPLES                 } from './subworkflows/parser'
+include { SPECTRAL_PREPROCESSING        } from './subworkflows/spectral_preprocessing'
+include { METABOLITES_QUANTIFICATION    } from './modules/metabolites_quantification'
+include { ADD_METADATA                  } from './modules/data_analysis/add_metadata'
+include { COMBINE_DATASET_BATCHES       } from './modules/data_analysis/combine_dataset_batches'
+include { BATCH_CORRECTION              } from './modules/data_analysis/batch_correction'
+include { DATA_ANALYSIS                 } from './subworkflows/data_analysis'
+include { PATHWAY_ANALYSIS as PATHWAY_ANALYSIS_UNIVARIATE } from './modules/biological_interpretation/pathway_analysis'
 include { PATHWAY_ANALYSIS as PATHWAY_ANALYSIS_MULTIVARIATE } from './modules/biological_interpretation/pathway_analysis'
-include { PATHWAY_ANALYSIS as PATHWAY_ANALYSIS_UNIVARIATE   } from './modules/biological_interpretation/pathway_analysis'
+
 
 workflow {
 
@@ -40,7 +43,7 @@ workflow {
 
     PARSE_SAMPLES(params.manifest)
     SPECTRAL_PREPROCESSING(PARSE_SAMPLES.out.samples)
-    METABOLITES_QUANTIFICATION(SPECTRAL_PREPROCESSING.out.normalized_metabolites, params.ncores)
+    METABOLITES_QUANTIFICATION(SPECTRAL_PREPROCESSING.out.normalized_metabolites, params.ncores, params.quantif_method)
     ADD_METADATA(METABOLITES_QUANTIFICATION.out.flow, params.log1p, params.metadata_column)
 
     if (params.run_combine_project_batches) {
@@ -67,8 +70,16 @@ workflow {
     }
 
     DATA_ANALYSIS(input_data_analysis, params.metadata_column)
-    PATHWAY_ANALYSIS_MULTIVARIATE(DATA_ANALYSIS.out.multivariate)
-    PATHWAY_ANALYSIS_UNIVARIATE(DATA_ANALYSIS.out.univariate)
+    
+    DATA_ANALYSIS.out.multivariate
+        .filter { multivariateData -> 
+            def (project, type, multivariateFile) = multivariateData
+            return !isFileEmpty(project, multivariateFile)
+        }
+        .set { validMultivariateData }
+
+    PATHWAY_ANALYSIS_MULTIVARIATE(validMultivariateData, params.top_n, params.kegg_org_id)
+    PATHWAY_ANALYSIS_UNIVARIATE(DATA_ANALYSIS.out.univariate, params.top_n, params.kegg_org_id)
 }
 
 workflow.onComplete {

@@ -10,6 +10,8 @@ process MULTIVARIATE_ANALYSIS {
     input:
         tuple(val(project), val(batch), path(normalized_metabolites))
         val(metadata_column)
+        val(test_size)
+        val(cross_val_fold)
     output:
         tuple(val(project),val("multivariate"), path("results/tables/*features_relative_importance.csv"), emit: multivariate)
         path("results/tables/models_stratification.csv")
@@ -28,6 +30,8 @@ process MULTIVARIATE_ANALYSIS {
         --data_file "${normalized_metabolites}" \
         --disease_metacol "${metadata_column}" \
         --patient_metacol "patient_no" \
-        --batch_metacol "batch"
+        --batch_metacol "batch" \
+        --test_size "${test_size}" \
+        --cross_val_fold "${cross_val_fold}"
     """
 }

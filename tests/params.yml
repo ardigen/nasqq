@@ -1,16 +1,34 @@
-manifest: manifest.csv      	      # <string>:   Absolute path to manifest.csv
-outDir: "output/outdir_all"         # <string>:   Absolute path to output directory
-reportsDir: "output/reports_all"    # <string>:   Absolute path to reports directory
-workDir: "output/workdir_all"       # <string>:   Absolute path to workdir directory
-launchDir: "./"                     # <string>:   Absolute path to launchdir directory
-maxRetries: 2                       # <integer>:  Number of tries for processing
-errorStrategy: retry                # <string>:   terminate/ignore/retry
-check_pulse_samples: cpmgpr1d       # <string>:   pulse program from given manifest e.g. cpmgpr1d, noesy1d
-run_bucketing: true                 # <boolean>:  true/ false enable/disable bucketing for simplify density of peaks before metabolites quantification
-run_warping: true                   # <boolean>:  true/ false enable/disable warping for spectra re-aligning based on a reference spectrum
-run_combine_project_batches: true   # <boolean>:  true/ false enable/disable merging datasets for data analysis where batch is not "None"
-run_batch_correction: false          # <boolean>:  true/ false enable/disable ComBat batch correction.
-ncores: 3                           # <integer>:  allocate number of threads for ASICS quantification task
-log1p: true                         # <boolean>:  true/false enable/disable log1p normalization of metabolites before data analysis
-metadata_column: Disease            # <string>:   column with binary state for data analysis module eg. "disease_state", "gender"
-reverse_axis_samples: selected      # <string>:   selected/all reverse axis for either all samples or selected by automatic threshold 
+                          ######PIPELINE########
+manifest: manifest.csv      	                                  # <string>:   Absolute path to manifest.csv
+outDir: "output/outdir_all"                                     # <string>:   Absolute path to output directory
+reportsDir: "output/reports_all"                                # <string>:   Absolute path to reports directory
+workDir: "output/workdir_all"                                   # <string>:   Absolute path to workdir directory
+launchDir: "./"                                                 # <string>:   Absolute path to launchdir directory
+maxRetries: 2                                                   # <integer>:  Number of tries for processing
+errorStrategy: retry                                            # <string>:   terminate/ignore/retry
+                          ####SPECTRAL PROCESSING####
+check_pulse_samples: cpmgpr1d                                   # <string>:   pulse program from given manifest e.g. cpmgpr1d, noesy1d
+rm_duplicated_names: false                                      # <boolean>:  true/false enable/disable removing duplicated sample names
+lambda_bc: 5000000                                              # <integer>:  Baseline correction lambda parameter, controlling smoothness of baseline
+p_bc: 0.00001                                                   # <float>:    Baseline correction p_bc parameter, controlling stickiness of baseline
+reverse_axis_samples: selected                                  # <string>:   selected/all reverse axis for either all samples or selected by automatic threshold
+run_bucketing: true                                             # <boolean>:  true/ false enable/disable bucketing for simplify density of peaks before metabolites quantification
+intmeth: t                                                      # <string>:   Type of bucketing, rectangular or trapezoidal: one of r, t
+mb: 15000                                                       # <integer>:  Number of buckets, default values supposed to be bigger than 5000 mb
+run_warping: true                                               # <boolean>:  true/ false enable/disable warping for spectra re-aligning based on a reference spectrum
+type_norm: pqn                                                  # <string>:   Normalization type, one of: "mean", "pqn", "median", "firstquartile", "peak", default is pqn
+removal_regions: list(Water = c(4.5, 5.1), Noise = c(0.0, 0.1)) # <string>:   Regions from spectra to be removed, by default Water and Noise around 0 ppms. default "list(Water = c(4.5, 5.1), Noise = c(0.0, 0.1))"
+ncores: 3                                                       # <integer>:  allocate number of threads for ASICS metabolites quantification task
+quantif_method: both                                            # <string>:   Metabolites quantification method one of: FWER, Lasso, or both. default = "both"
+                          ####DATA ANALYSIS####
+run_combine_project_batches: true                               # <boolean>:  true/ false enable/disable merging datasets for data analysis where batch is not "None"
+run_batch_correction: false                                     # <boolean>:  true/ false enable/disable ComBat batch correction
+log1p: true                                                     # <boolean>:  true/false enable/disable log1p normalization of metabolites before data analysis
+metadata_column: Disease                                        # <string>:   column with binary state for data analysis module eg. "disease_state", "gender"
+zeronan_threshold: 0.7                                          # <float>:    Threshold for zero or NaN values in multivariate analysis, values from range 0-1 
+test_size: 0.3                                                  # <integer>:  Test size for splitting data in multivariate analysis, default = 30%
+cross_val_fold: 2                                               # <float>:    Cross-validation folds fo Logistic regression CV model, default = 2
+pvalue_shapiro: 0.08                                            # <float>:    (Optional). P-value threshold for normality Shapiro-Wilk test. default = 0.05
+                          ####BIOLOGICAL INTERPRETATION####
+top_n: 3                                                        # <intiger>:  Number of metabolites to include in enrichment for pathway analysis, default = 20
+kegg_org_id: pae                                                # <string>:   KEGG organism ID, default is human "hsa"

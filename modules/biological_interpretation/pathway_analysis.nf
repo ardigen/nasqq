@@ -11,6 +11,8 @@ process PATHWAY_ANALYSIS {
 
     input:
         tuple(val(project), val(type), path(input_path))
+        val(top_n)
+        val(kegg_org_id)
     output:
         path("*"), emit: whole_output
 
@@ -18,7 +20,7 @@ process PATHWAY_ANALYSIS {
     """
     pathway_analysis.R \
         --input_file_path "${input_path}" \
-        --top_n "20" \
-        --kegg_org_id "hsa"
+        --top_n "${top_n}" \
+        --kegg_org_id "${kegg_org_id}"
     """
 }

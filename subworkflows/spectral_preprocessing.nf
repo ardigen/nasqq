@@ -21,7 +21,7 @@ workflow SPECTRAL_PREPROCESSING {
     take:
         samples
     main:
-        LOAD_FIDS(samples, params.check_pulse_samples)
+        LOAD_FIDS(samples, params.check_pulse_samples, params.rm_duplicated_names)
         RAW_FIDS_VISUALIZATION(LOAD_FIDS.out.flow)
         GROUP_DELAY_CORRECTION(LOAD_FIDS.out.flow)
         SOLVENT_SUPPRESSION(GROUP_DELAY_CORRECTION.out.flow)
@@ -30,7 +30,7 @@ workflow SPECTRAL_PREPROCESSING {
         FOURIER_TRANSFORMATION(ZERO_FILLING.out.flow)
         ZERO_ORDER_PHASE_CORRECTION(FOURIER_TRANSFORMATION.out.flow)
         INTERNAL_REFERENCING(ZERO_ORDER_PHASE_CORRECTION.out.flow, params.reverse_axis_samples)
-        BASELINE_CORRECTION(INTERNAL_REFERENCING.out.flow)
+        BASELINE_CORRECTION(INTERNAL_REFERENCING.out.flow, params.lambda_bc, params.p_bc)
         NEGATIVE_VALUES_ZEROING(BASELINE_CORRECTION.out.flow)
 
         if (params.run_warping) {
@@ -41,10 +41,10 @@ workflow SPECTRAL_PREPROCESSING {
         }
 
         if (params.run_bucketing) {
-            BUCKETING(WINDOW_SELECTION.out.flow)
-            NORMALIZATION(BUCKETING.out.flow)
+            BUCKETING(WINDOW_SELECTION.out.flow, params.intmeth, params.mb)
+            NORMALIZATION(BUCKETING.out.flow, params.type_norm, params.removal_regions)
         } else {
-            NORMALIZATION(WINDOW_SELECTION.out.flow)
+            NORMALIZATION(WINDOW_SELECTION.out.flow, params.type_norm, params.removal_regions)
         }
 
     emit:
