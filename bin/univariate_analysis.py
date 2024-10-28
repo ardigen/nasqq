@@ -134,6 +134,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--pvalue_shapiro",
+        type=float,
         default=0.05,
         help="Threshold for normality Shapiro-Wilk test.",
     )

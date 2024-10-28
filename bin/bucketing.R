@@ -49,7 +49,6 @@ intmeth <- opt$intmeth
 width <- opt$width
 mb <- opt$mb
 
-
 if (is.null(id) ||
   is.null(raw_rds) ||
   is.null(Spectrum_data_WS)) {

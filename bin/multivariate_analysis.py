@@ -122,7 +122,6 @@ def main(args):
     shap_model = clone(models[best_model])
 
     cleaned_model_name = re.sub(r"\W+", "_", best_model.lower())
-
     if "Logistic regression" in best_model:
         plt.figure(figsize=(20, 25), dpi=400)
         weights = (
@@ -169,7 +168,7 @@ def main(args):
     else:
         shap_df = get_shap_values(X=X, y=y, cv=cv, model=shap_model, model_type="rf")
 
-    shap_relative_importance = get_shaps_relative_importance(shap_df=shap_df)
+    shap_relative_importance = get_shaps_relative_importance(shap_df=shap_df, threshold=0.95)
     shap_relative_importance.to_csv(
         os.path.join(
             args.results_location,

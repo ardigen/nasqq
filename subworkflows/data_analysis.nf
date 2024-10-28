@@ -11,10 +11,10 @@ workflow DATA_ANALYSIS {
         metabolites
         metadata_column
     main:
-        FEATURES_PROCESSING(metabolites, metadata_column)
+        FEATURES_PROCESSING(metabolites, metadata_column, params.zeronan_threshold)
         EXPLORATORY_DATA_ANALYSIS(FEATURES_PROCESSING.out.fd, metadata_column)
-        UNIVARIATE_ANALYSIS(FEATURES_PROCESSING.out.fd, metadata_column)
-        MULTIVARIATE_ANALYSIS(FEATURES_PROCESSING.out.fd, metadata_column)
+        UNIVARIATE_ANALYSIS(FEATURES_PROCESSING.out.fd, metadata_column, params.pvalue_shapiro)
+        MULTIVARIATE_ANALYSIS(FEATURES_PROCESSING.out.fd, metadata_column, params.test_size, params.cross_val_fold)
 
     emit:
         univariate = UNIVARIATE_ANALYSIS.out.univariate

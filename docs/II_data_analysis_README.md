@@ -28,7 +28,20 @@ The script performs the following tasks:
 3. Creates visualizations for PCA analysis, distribution plots, and cluster maps.
 4. Saves the results in the specified directory.
 
-## III - Metabolites Univariate Analysis
+## III - Metabolites Batch Correction
+
+The `batch_correction.py` script applies ComBat batch correction to the metabolomics data to minimize batch effects and improve data consistency.
+
+### Overview
+
+The script performs the following tasks:
+
+1. Load metabolite data from a CSV file, with specified index columns for managing metadata, such as batch, patient, and disease information.
+2. Apply ComBat correction to adjust for batch effects using specified metadata. The correction can include optional covariates to account for additional sources of variation.
+3. Outputs a batch-corrected data file in CSV format.
+
+
+## IV - Metabolites Univariate Analysis
 
 `univariate_analysis.py` script analyzes metabolites data, detects outliers, and performs univariate statistical tests on the data.
 
@@ -41,7 +54,7 @@ The script performs the following tasks:
 3. Compares two disease states using Mann-Whitney U and Kruskal-Wallis tests.
 4. Controls for false discovery rate (FDR) and saves the results.
 
-## IV - Metabolites Multivariate Analysis
+## V - Metabolites Multivariate Analysis
 
 `multivariate_analysis.py` script analyzes metabolites data using various machine learning models and provides insights into feature importance.
 
@@ -80,6 +93,12 @@ python exploratory_data_analysis.py --data_location <data> --results_location <r
 The script generates visualizations and saves them in the specified `<results>` directory. The output includes PCA plots, distribution plots, and cluster maps.
 
 ```bash
+python batch_correction.py --data_location <data> --data_file <metabolites.csv> --batch_metacol <batch> --patient_metacol <patient_no> --disease_metacol <disease_state> --covariates <covariate_values>
+```
+
+This script applies ComBat batch correction to the data, outputting a batch-corrected file (`metabolites_batch_corrected.txt`) saved in the working directory. Optionally, <covariate_values> with a space-separated list of covariates might be applied for correction.
+
+```bash
 python univariate_analysis.py --data_location <data> --results_location <results> --data_file <metabolites_processed.parquet> --disease_metacol <disease_state> --batch_metacol <batch> --patient_metacol <patient_no>
 ```
 The script generates a table (`univariate_analysis.csv`) containing the results of the univariate analysis, including U-statistic, U p-value, H-statistic, H p-value, U FDR, and H FDR. The table is saved in the specified `<results>/tables` directory.
@@ -103,6 +122,7 @@ The results of the analysis are saved in the `<results>` directory, the key outp
 * **--disease_metacol**: Name of the disease metadata column.
 * **--batch_metacol**: Name of the batch metadata column. (If batch is yet to be discovered, leave empty.)
 * **--zeronan_threshold**: Threshold for zero or NaN values.(default: 0.7)
+* **--covariates**: Optional list of covariates for batch correction.
 * **--test_size**: Test size for splitting data. (default: 0.3)
 * **--cross_val_fold**: Number of cross-validation folds. (default: 3)
 
@@ -110,11 +130,11 @@ Apart from main workflow scripts, supplementary `ml_helpers.py` script contains 
 
 Additional Notes:
 * Adjust paths and filenames in the command based on your project structure.
-* Ensure required dependencies (numpy, pandas, etc.) are installed from requirements.txt.
+* Ensure required dependencies (numpy, pandas, etc.) are installed from `requirements.txt`.
 * Make sure the `ml_helpers.py` is available in the same location as all utilized scripts, as it contains the crucial functions for analysis.
-* (Ideally) Run all scripts in provided Python_utils docker container.
-* The scripts will create a directory structure under the specified results_location and save the processed data.
-* Exploratory analysis will be executed followed by (uni-/multi-)variate analysis. Tables are stored separately from figures in dedicated folders.
+* (Ideally) Run all scripts in provided **Python_utils** docker container.
+* The scripts will create a directory structure under the specified `results_location` and save the processed data.
+* Exploratory analysis will be executed followed by optional batch correction and (uni-/multi-)variate analysis. Tables are stored separately from figures in dedicated folders.
 
 #### License
 

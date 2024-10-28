@@ -64,6 +64,7 @@
 16. **Metabolites Quantification**: Identify and quantify metabolites based on normalized spectra.
 17. **Add Metadata**: Merge metadata with quantified metabolites' relative abundances.
 18. **(Optional) Combine Dataset Batches**: Merge batches from the dataset for streamlined analysis.
+19. **(Optional) Batch Correction**: Remove batch effect from the data.
 19. **Features Processing**: Load data and perform sanity checks.
 20. **Exploratory Data Analysis**: Conduct Principal Component Analysis and generate exploratory analysis visualizations.
 21. **Univariate Analysis**: Identify outliers, assess data normality, and conduct univariate statistical tests.
@@ -182,25 +183,58 @@ data/dataset/
 
 > *Note: The [manifest.csv](./tests/manifest.csv) file should include dataset-specific local parameters. Metadata files may contain more records than the specific dataset, but only those records that can be mapped to folders found in `input_path` will be used.*  
 
-4. The final file that needs to be created is [params.yml](./tests/params.yml). This document outlines the required inputs for configuring the data processing pipeline and consists of global parameters for the pipeline. These parameters are applied run-wise. Ensure that you fill in the necessary values according to the table below.
+4. The final file that needs to be created is [params.yml](./tests/params.yml). This document outlines the required inputs for configuring the data processing pipeline and consists of global parameters for the pipeline and its stages. These parameters are applied run-wise. Ensure that you fill in the necessary values according to the tables below (a-d).
 
-| Input          | Description                                                                                                 | Datatype  |
-|----------------|-------------------------------------------------------------------------------------------------------------|-----------|
-| manifest       | Absolute path to the manifest.csv file containing metadata information for the analysis                     | string    |
-| outDir         | Absolute path to the directory where the output files will be stored                                        | string    |
-| reportsDir     | Absolute path to the directory where the analysis reports will be generated                                 | string    |
-| workDir        | Absolute path to the directory where the intermediate work files will be stored                             | string    |
-| launchDir      | Absolute path to the directory from which the pipeline is launched                                          | string    |
-| maxRetries     | Number of attempts the pipeline should make to process a task before giving up                              | integer   |
-| errorStrategy  | The strategy to handle errors during pipeline execution (terminate/ignore/retry)                            | string    |
-| check_pulse_samples | The pulse program specified in the manifest file for processing                                        | string    |
-| run_bucketing  | Enable/disable bucketing for simplifying the density of peaks before metabolite quantification              | boolean   |
-| run_warping    | Enable/disable warping for spectra re-alignment based on a reference spectrum                               | boolean   |
-| run_combine_project_batches | Enable/disable merging datasets for data analysis where batch is not "None"                    | boolean   |
-| ncores         | The number of threads allocated for the ASICS quantification task                                           | integer   |
-| log1p          | Enable/disable log1p normalization of metabolites before data analysis                                      | boolean   |
-| metadata_column | The column name containing state information for the data analysis module                                 | string    |
-| reverse_axis_samples | Specifies whether to reverse the axis for all samples or selected samples based on a threshold        | string    |
+    a. Pipeline
+
+    | **Input**     | **Description**                                                                         | **Datatype** |
+    |---------------|-----------------------------------------------------------------------------------------|--------------|
+    | manifest      | Absolute path to the manifest.csv file containing metadata information for the analysis | string       |
+    | outDir        | Absolute path to the directory where the output files will be stored                    | string       |
+    | reportsDir    | Absolute path to the directory where the analysis reports will be generated             | string       |
+    | workDir       | Absolute path to the directory where the intermediate work files will be stored         | string       |
+    | launchDir     | Absolute path to the directory from which the pipeline is launched                      | string       |
+    | maxRetries    | Number of attempts the pipeline should make to process a task before giving up          | integer      |
+    | errorStrategy | The strategy to handle errors during pipeline execution (terminate/ignore/retry)        | string       |
+
+    b. Spectral processing
+
+    | **Input**            | **Description**                                                                                | **Datatype** |
+    |----------------------|------------------------------------------------------------------------------------------------|--------------|
+    | check_pulse_samples  | The pulse program specified in the manifest file for processing      | string       |
+    | rm_duplicated_names  | Enable/disable removing duplicated sample names                                                | boolean      |
+    | lambda_bc            | Baseline correction lambda parameter, controlling the smoothness of the baseline               | integer      |
+    | p_bc                 | Baseline correction parameter, controlling stickiness of the baseline                          | float        |
+    | reverse_axis_samples | Specifies whether to reverse the axis for all samples or selected samples based on a threshold | string       |
+    | run_bucketing        | Enable/disable bucketing for simplifying the density of peaks before metabolite quantification | boolean      |
+    | intmeth              | Type of bucketing                                   | string       |
+    | mb                   | Number of buckets                                  | integer      |
+    | run_warping          | Enable/disable warping for spectra re-alignment based on a reference spectrum                  | boolean      |
+    | type_norm            | Normalization type  | string       |
+    | removal_regions      | Spectral regions to be removed               | string       |
+    | ncores               | Number of threads allocated for the ASICS quantification task                                  | integer      |
+    | quantif_method       | Metabolite quantification method                                  | string       |
+
+    c. Data analysis
+
+    | **Input**                   | **Description**                                                             | **Datatype** |
+    |-----------------------------|-----------------------------------------------------------------------------|--------------|
+    | run_combine_project_batches | Enable/disable merging datasets for data analysis where batch is not "None" | boolean      |
+    | run_batch_correction        | Enable/disable ComBat batch correction                                      | boolean      |
+    | log1p                       | Enable/disable log1p normalization of metabolites before data analysis      | boolean      |
+    | metadata_column             | The column name containing state information for the data analysis module   | string       |
+    | zeronan_threshold           | Threshold for zero or NaN values in multivariate analysis      | float        |
+    | test_size                   | Test size for splitting data in multivariate analysis        | float        |
+    | cross_val_fold              | Cross-validation folds for Logistic regression CV model       | integer      |
+    | pvalue_shapiro              | P-value threshold for normality (Shapiro-Wilk test)         | float        |
+
+    d. Biological interpretation
+
+    | **Input**   | **Description**                                                                   | **Datatype** |
+    |-------------|-----------------------------------------------------------------------------------|--------------|
+    | top_n       | Number of metabolites to include in enrichment for pathway analysis | integer      |
+    | kegg_org_id | KEGG organism ID                                          | string       |
+
 
 > *Note: The [params.yml](./tests/params.yml) file consolidates all global parameters required for executing the pipeline using the `-params-file` flag. Alternatively, the pipeline can be executed without creating this file by specifying each parameter as a separate flag, such as `--run_warping True` or `--ncores 3`, in accordance with Nextflow [configuration](https://www.nextflow.io/docs/latest/config.html).* 
 
