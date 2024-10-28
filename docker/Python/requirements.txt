@@ -10,3 +10,4 @@ pyarrow==5.0.0
 kaleido==0.2.1
 numba==0.58.1
 pytest==8.0.0
+inmoose==0.7.0

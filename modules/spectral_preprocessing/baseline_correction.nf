@@ -9,12 +9,14 @@ process BASELINE_CORRECTION {
     
     input:
         tuple(val(project), val(batch), val(selected_sample_names), path(metadata_file), val(window_selection_range), path(fd), path(input_path))
+        val(lambda_bc)
+        val(p_bc)
     output:
         tuple(val(project), val(batch), val(selected_sample_names), path(metadata_file), val(window_selection_range), path(fd),path('results/tables/*_grouped_Spectrum_data_BC.rds'), emit: flow)
         path("results/*")
 
     script:
     """
-    baseline_correction.R --id "${project}" --spectra_ir "${input_path}" --raw_rds "${fd}"
+    baseline_correction.R --id "${project}" --spectra_ir "${input_path}" --raw_rds "${fd}" --lambda_bc "${lambda_bc}" --p_bc "${p_bc}"
     """
 }

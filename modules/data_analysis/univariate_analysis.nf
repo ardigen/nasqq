@@ -9,6 +9,7 @@ process UNIVARIATE_ANALYSIS {
     input:
         tuple(val(project), val(batch), path(normalized_metabolites))
         val(metadata_column)
+        val(pvalue_shapiro)
     output:
         tuple(val(project), val("univariate"), path("results/tables/univariate_analysis.csv"), emit: univariate)
         path("results/outliers.txt")
@@ -25,6 +26,7 @@ process UNIVARIATE_ANALYSIS {
     univariate_analysis.py \
         --data_file "${normalized_metabolites}" \
         --disease_metacol "${metadata_column}" \
-        --patient_metacol "patient_no"
+        --patient_metacol "patient_no" \
+        --pvalue_shapiro ${pvalue_shapiro}
     """
 }

@@ -1,3 +1,27 @@
+/*
+ * Function to check if a file is empty or only contains a header
+ */
+def isFileEmpty(project, path) {
+    if (!path) {
+        log.warn("File path is null.")
+        return true
+    }
+
+    def file = new File(path.toString())
+
+    if (!file.exists() || file.length() == 0) {
+        log.warn("File does not exist or is empty: ${file.getName()}")
+        return true
+    }
+    
+    def lines = file.readLines()
+    def isEmpty = lines.size() <= 1  // 1 line means only header is present
+    if (isEmpty) {
+        log.warn("File: ${file.getName()} contains only header. PATHWAY_ANALYSIS skipped for ${project}. The features have fallen into random-like performance, suggesting the problem is not complex. Please refer to UNIVARIATE results.")
+    }
+    return isEmpty
+}
+
 
 /*
  * Extract name of software tool from process name using $task.process
