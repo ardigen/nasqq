@@ -6,7 +6,7 @@ options    = initOptions(params.options)
 process METABOLITES_QUANTIFICATION {
     tag "${project}"
     label "process_high"
-    container "hnmr-workflow:r_utils"
+    container "ghcr.io/ardigen/nasqq/r_utils"
     publishDir "${params.outDir}/${project}/metabolites_quantification/", mode: 'copy'
 
     input:
